@@ -39,8 +39,15 @@ function getIntervalArray(start, end) {
  *    sumArrays([10, 20, 30], [5, 10, 15]) => [15, 30, 45]
  *    sumArrays([-1, 0, 1], [1, 2, 3, 4]) => [0, 2, 4, 4]
  */
-function sumArrays(/* arr1, arr2 */) {
-  throw new Error('Not implemented');
+function sumArrays(arr1, arr2) {
+  let arr = Array(Math.max(arr1.length, arr2.length)).fill(0);
+  arr = arr.map((a, i) => {
+    let b = a;
+    if (arr1.at(i)) b += arr1.at(i);
+    if (arr2.at(i)) b += arr2.at(i);
+    return b;
+  });
+  return arr;
 }
 
 /** 3
@@ -401,11 +408,16 @@ function generateOdds(len) {
  *   getElementByIndices(['one','two','three'], [2]) => 'three'  (arr[2])
  *   getElementByIndices([[[ 1, 2, 3]]], [ 0, 0, 1 ]) => 2        (arr[0][0][1])
  */
-function getElementByIndices(/* arr, indices */) {
-  throw new Error('Not implemented');
+function getElementByIndicesWhile(arr, indices, i) {
+  const arr1 = arr[indices[i]];
+  if (i === indices.length - 1) return arr1;
+  return getElementByIndicesWhile(arr1, indices, i + 1);
 }
-
-/**
+function getElementByIndices(arr, indices) {
+  const arr1 = getElementByIndicesWhile(arr, indices, 0);
+  return arr1;
+}
+/** 23
  * Returns the number of all falsy values in the specified array.
  *
  * @param {array} arr - The input array.
@@ -417,11 +429,11 @@ function getElementByIndices(/* arr, indices */) {
  *  getFalsyValuesCount([ -1, 'false', null, 0 ]) => 2
  *  getFalsyValuesCount([ null, undefined, NaN, false, 0, '' ]) => 6
  */
-function getFalsyValuesCount(/* arr */) {
-  throw new Error('Not implemented');
+function getFalsyValuesCount(arr) {
+  return arr.filter((item) => !item).length;
 }
 
-/**
+/** 24
  * Creates an identity matrix of the specified size.
  *
  * @param {number} n - A size of the matrix.
@@ -439,11 +451,17 @@ function getFalsyValuesCount(/* arr */) {
  *                              [0,0,0,1,0],
  *                              [0,0,0,0,1]]
  */
-function getIdentityMatrix(/* n */) {
-  throw new Error('Not implemented');
+function getIdentityMatrix(n) {
+  let arr = Array(n).fill(0);
+  arr = arr.map(() => Array(n).fill(0));
+  arr = arr.map((item, index) => {
+    item.splice(index, 1, 1);
+    return item;
+  });
+  return arr;
 }
 
-/**
+/** 25
  * Returns an array containing indices of odd elements in the input array.
  *
  * @param {array} numbers - The array of numbers.
@@ -454,11 +472,16 @@ function getIdentityMatrix(/* n */) {
  *    getIndicesOfOddNumbers([2, 4, 6, 8, 10]) => []
  *    getIndicesOfOddNumbers([11, 22, 33, 44, 55]) => [0, 2, 4]
  */
-function getIndicesOfOddNumbers(/* numbers */) {
-  throw new Error('Not implemented');
+function getIndicesOfOddNumbers(numbers) {
+  const arr = [];
+  numbers.map((a) => {
+    if (a % 2 === 1) arr.push(numbers.indexOf(a));
+    return a;
+  });
+  return arr;
 }
 
-/**
+/** 26
  * Returns the array of RGB Hex strings from the specified array of numbers.
  *
  * @param {array} arr - The input array.
@@ -468,11 +491,11 @@ function getIndicesOfOddNumbers(/* numbers */) {
  *    getHexRGBValues([ 0, 255, 16777215]) => [ '#000000', '#0000FF', '#FFFFFF' ]
  *    getHexRGBValues([]) => []
  */
-function getHexRGBValues(/* arr */) {
-  throw new Error('Not implemented');
+function getHexRGBValues(arr) {
+  return arr.map((a) => a.toString(16).padStart(7, '#0000000').toUpperCase());
 }
 
-/**
+/** 27
  * Returns the n largest values from the specified array
  *
  * @param {array} arr - The input array
@@ -486,11 +509,28 @@ function getHexRGBValues(/* arr */) {
  *   getMaxItems([ 10, 2, 7, 5, 3, -5 ], 3) => [ 10, 7, 5 ]
  *   getMaxItems([ 10, 10, 10, 10 ], 3) => [ 10, 10, 10 ]
  */
-function getMaxItems(/* arr, n */) {
-  throw new Error('Not implemented');
+function getMax(arr) {
+  const max = Math.max.apply(null, arr);
+  return max;
 }
-
-/**
+function getNewArr(arr, max) {
+  const arr1 = arr;
+  arr1.splice(arr.indexOf(max), 1);
+  return arr1;
+}
+function getMaxItems(arr1, n) {
+  if (n >= arr1.length) return arr1;
+  let arr = arr1;
+  const arrMax = Array(n)
+    .fill(0)
+    .map(() => {
+      const max = getMax(arr);
+      arr = getNewArr(arr, max);
+      return max;
+    });
+  return arrMax;
+}
+/** 28
  * Finds and returns an array containing only the common elements found in two arrays.
  *
  * @param {array} arr1 - The first array.
@@ -502,11 +542,15 @@ function getMaxItems(/* arr, n */) {
  *    findCommonElements(['a', 'b', 'c'], ['b', 'c', 'd']) => [ 'b', 'c' ]
  *    findCommonElements([1, 2, 3], ['a', 'b', 'c']) => []
  */
-function findCommonElements(/* arr1, arr2 */) {
-  throw new Error('Not implemented');
+function findCommonElements(arr1, arr2) {
+  const arr = arr1.map((a) => {
+    if (arr2.includes(a)) return a;
+    return undefined;
+  });
+  return arr.filter((item) => item);
 }
 
-/**
+/** 29
  * Finds the length of the longest increasing and uninterrupted subsequence of a given array of integers.
  *
  * @param {array} nums - The array of integers.
@@ -516,12 +560,39 @@ function findCommonElements(/* arr1, arr2 */) {
  *    findLongestIncreasingSubsequence([10, 22, 9, 33, 21, 50, 41, 60, 80]) => longest is [41, 60, 80] => 3
  *    findLongestIncreasingSubsequence([3, 10, 2, 1, 20]) => longest is [3, 10] and [1, 20] => 2
  *    findLongestIncreasingSubsequence([50, 3, 10, 7, 40, 80]) => longest is [7, 40, 80] => 3
+ * function findLongestIncreasingSubsequence(arr) {
+ *   let maxLength = 1;
+ *   arr.reduce((arrTemp, item) => {
+ *     if (arrTemp[arrTemp.length - 1] > item) arrTemp = [];
+ *     arrTemp.push(item);
+ *     if (maxLength < arrTemp.length) maxLength = arrTemp.length;
+ *     return arrTemp;
+ *   }, []);
+ *   return maxLength;
+ * }
  */
-function findLongestIncreasingSubsequence(/* nums */) {
-  throw new Error('Not implemented');
-}
 
-/**
+function findLongestIncreasingSubsequence(arr) {
+  let maxLength = 1;
+  arr.reduce(
+    (arrTemp, item) => {
+      if (
+        arrTemp[arrTemp.length - 1][arrTemp[arrTemp.length - 1].length - 1] >
+        item
+      ) {
+        arrTemp.push([]);
+      }
+      arrTemp[arrTemp.length - 1].push(item);
+      if (maxLength < arrTemp[arrTemp.length - 1].length) {
+        maxLength = arrTemp[arrTemp.length - 1].length;
+      }
+      return arrTemp;
+    },
+    [[]]
+  );
+  return maxLength;
+}
+/** 30
  * Propagates every item in sequence its position times
  * Returns an array that consists of: one first item, two second items, three third items etc.
  *
@@ -535,11 +606,14 @@ function findLongestIncreasingSubsequence(/* nums */) {
  *  propagateItemsByPositionIndex([ 'a', 'b', 'c', null ]) => [ 'a', 'b', 'b', 'c', 'c', 'c',  null, null, null, null ]
  *  propagateItemsByPositionIndex([ 1,2,3,4,5 ]) => [ 1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5 ]
  */
-function propagateItemsByPositionIndex(/* arr */) {
-  throw new Error('Not implemented');
+function propagateItemsByPositionIndex(arr) {
+  const arr1 = arr.map((a, i) => {
+    return Array(i + 1).fill(a);
+  });
+  return arr1.flat(1);
 }
 
-/**
+/** 31
  * Shifts an array by n positions. If n is negative, the array is shifted to the left;
  * if positive, it is shifted to the right.
  *
@@ -552,11 +626,11 @@ function propagateItemsByPositionIndex(/* arr */) {
  *    shiftArray(['a', 'b', 'c', 'd'], -1) => ['b', 'c', 'd', 'a']
  *    shiftArray([10, 20, 30, 40, 50], -3) => [40, 50, 10, 20, 30]
  */
-function shiftArray(/* arr, n */) {
-  throw new Error('Not implemented');
+function shiftArray(arr, n) {
+  return arr.slice(-n).concat(arr.slice(0, -n));
 }
 
-/**
+/** 32
  * Sorts digit names.
  *
  * @param {array} arr - The input array.
@@ -569,11 +643,24 @@ function shiftArray(/* arr, n */) {
  *   sortDigitNamesByNumericOrder([ 'nine','eight','nine','eight' ]) => [ 'eight','eight','nine','nine']
  *   sortDigitNamesByNumericOrder([ 'one','one','one','zero' ]) => [ 'zero','one','one','one' ]
  */
-function sortDigitNamesByNumericOrder(/* arr */) {
-  throw new Error('Not implemented');
+function sortDigitNamesByNumericOrder(arr) {
+  const numbers = [
+    'zero',
+    'one',
+    'two',
+    'three',
+    'four',
+    'five',
+    'six',
+    'seven',
+    'eight',
+    'nine',
+  ];
+  const newArr = arr.sort((a, b) => numbers.indexOf(a) - numbers.indexOf(b));
+  return newArr;
 }
 
-/**
+/** 33
  * Swaps the head and tail of the specified array:
  * the head (first half) of array move to the end, the tail (last half) move to the start.
  * The middle element (if exists) leave on the same position. *
@@ -592,8 +679,17 @@ function sortDigitNamesByNumericOrder(/* arr */) {
  *   swapHeadAndTail([]) => []
  *
  */
-function swapHeadAndTail(/* arr */) {
-  throw new Error('Not implemented');
+function swapOdd(arr) {
+  const n = arr.length / 2;
+  return arr.slice(n).concat(arr.slice(0, n));
+}
+function swapEven(arr) {
+  const n = arr.length / 2 - 0.5;
+  return arr.slice(n + 1).concat(arr.splice(n, 1), arr.slice(0, n));
+}
+function swapHeadAndTail(arr) {
+  if (arr.length % 2 === 0) return swapOdd(arr);
+  return swapEven(arr);
 }
 
 module.exports = {
